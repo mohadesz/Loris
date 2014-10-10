@@ -160,7 +160,7 @@
                     <div class="panel-body">
                         <div class="list-group tasks">
                             {if $conflicts neq "" and $conflicts neq 0}
-                            <a href="main.php?test_name=conflicts_resolve" class="list-group-item">
+                            <a href="main.php?test_name=conflict_resolver" class="list-group-item">
                                 <div class="row">
                                     <div class="col-xs-8 text-left">
                                         <div class="huge">{$conflicts}</div>
@@ -174,10 +174,10 @@
                             </a>
                             {/if}
                             {if $incomplete_forms neq "" and $incomplete_forms neq 0}
-                                {if $incomplete_forms_site eq "All"}
-                                <a href="main.php?test_name=statistics_site" class="list-group-item">
+                                {if $incomplete_forms_site eq "Site: all"}
+                                <a href="main.php?test_name=statistics&submenu=statistics_site" class="list-group-item">
                                 {else}
-                                <a href="main.php?test_name=statistics_site&CenterId={$user_site}&ProjectID=" class="list-group-item">
+                                <a href="main.php?test_name=statistics&submenu=statistics_site&CenterID={$user_site}" class="list-group-item">
                                 {/if}
                                     <div class="row">
                                         <div class="col-xs-8 text-left">
@@ -196,7 +196,7 @@
                                     <div class="row">
                                         <div class="col-xs-8 text-left">
                                             <div class="huge">{$new_scans}</div>
-                                            New scan{if $new_scans neq 1}s{/if}
+                                            New and pending scan{if $new_scans neq 1}s{/if}
                                         </div>
                                         <div class="col-xs-4 text-right alert-chevron">
                                             <span class="glyphicon glyphicon-chevron-right medium"></span>
@@ -234,7 +234,7 @@
                             </a>
                             {/if}
                             {if $pending_users neq "" and $pending_users neq 0}
-                            <a href="main.php?test_name=user_accounts&pending=1&filter=Show%20Data" class="list-group-item">
+                            <a href="main.php?test_name=user_accounts&centerID=&userID=&active=&real_name=&pending=Y&email=&examiner=&filter=Show+Data" class="list-group-item">
                                 <div class="row">
                                     <div class="col-xs-8 text-left">
                                         <div class="huge">{$pending_users}</div>
@@ -266,7 +266,7 @@
                     <div class="panel-body">
                         <div class="list-group document-repository-item">
                             {foreach from=$document_repository_notifications item=link}
-                            <a href="document_repository/admin/{$link.File_name}" class="list-group-item">
+                            <a href="AjaxHelper.php?Module=document_repository&script=GetFile.php&File={$link.Data_dir}" download="{$link.File_name}" class="list-group-item">
                                 {if $link.new eq 1}
                                     <span class="pull-left new-flag">NEW</span>
                                 {/if}

@@ -165,7 +165,7 @@ chmod 777 ../smarty/templates_c
 
 # set the group user to www-data for tools/logs directory:
 if [ -d logs ]; then
-	chgrp www-data logs
+	sudo chgrp www-data logs
 	# set the proper permission for the tools/logs directory:
 	chmod 770 logs 
 fi
@@ -214,7 +214,7 @@ stty -echo
 while true; do
         read -p "What is the password for MySQL user '$mysqluser'? " mysqlpass
 	echo ""
-        read -p "Re-enter the password to check for accuracy " mysqlpass2
+        read -p "Re-enter the password to check for accuracy: " mysqlpass2
 	if [[ "$mysqlpass" == "$mysqlpass2" ]] ; then
 	        break;
 	fi
@@ -228,7 +228,7 @@ stty -echo
 while true; do
         read -p "Enter the front-end Loris 'admin' user's password: " lorispass
         echo ""
-        read -p "Re-enter the password to check for accuracy " lorispass2
+        read -p "Re-enter the password to check for accuracy: " lorispass2
         if [[ "$lorispass" == "$lorispass2" ]] ; then
                 break;
         fi
@@ -255,7 +255,7 @@ stty -echo
 while true; do
         read -p "MySQL password for user '$mysqlrootuser': " mysqlrootpass
         echo ""
-        read -p "Re-enter the password to check for accuracy " mysqlrootpass2
+        read -p "Re-enter the password to check for accuracy: " mysqlrootpass2
         if [[ "$mysqlrootpass" == "$mysqlrootpass2" ]] ; then
                 break;
         fi
@@ -265,6 +265,7 @@ done;
 
 stty echo
 
+echo ""
 while true; do
     echo ""
     echo "Attempting to create the MySQL database '$mysqldb' ..."
@@ -277,7 +278,7 @@ while true; do
         while true; do
             read -p "MySQL password for user '$mysqlrootuser': " mysqlrootpass
             echo ""
-            read -p "Re-enter the password to check for accuracy " mysqlrootpass2
+            read -p "Re-enter the password to check for accuracy: " mysqlrootpass2
             if [[ "$mysqlrootpass" == "$mysqlrootpass2" ]] ; then
                 break;
             fi
@@ -334,8 +335,8 @@ sed -e "s/%HOSTNAME%/$mysqlhost/g" \
 
 echo ""
 echo "Populating database config."
-mysql $mysqldb -h$mysqlhost --user=$mysqluser --password="$mysqlpass" -A -e "UPDATE Config SET Value='$RootDir' WHERE ConfigID=(SELECT ID FROM ConfigSettings WHERE Name='base')"
-mysql $mysqldb -h$mysqlhost --user=$mysqluser --password="$mysqlpass" -A -e "UPDATE Config SET Value='$RootDir' WHERE ConfigID=(SELECT ID FROM ConfigSettings WHERE Name='DownloadPath')"
+mysql $mysqldb -h$mysqlhost --user=$mysqluser --password="$mysqlpass" -A -e "UPDATE Config SET Value='$RootDir/' WHERE ConfigID=(SELECT ID FROM ConfigSettings WHERE Name='base')"
+mysql $mysqldb -h$mysqlhost --user=$mysqluser --password="$mysqlpass" -A -e "UPDATE Config SET Value='$RootDir/' WHERE ConfigID=(SELECT ID FROM ConfigSettings WHERE Name='DownloadPath')"
 mysql $mysqldb -h$mysqlhost --user=$mysqluser --password="$mysqlpass" -A -e "UPDATE Config SET Value='/data/$projectname/data/' WHERE ConfigID=(SELECT ID FROM ConfigSettings WHERE Name='imagePath')"
 mysql $mysqldb -h$mysqlhost --user=$mysqluser --password="$mysqlpass" -A -e "UPDATE Config SET Value='/data/$projectname/data/' WHERE ConfigID=(SELECT ID FROM ConfigSettings WHERE Name='data')"
 mysql $mysqldb -h$mysqlhost --user=$mysqluser --password="$mysqlpass" -A -e "UPDATE Config SET Value='/data/$projectname/data/' WHERE ConfigID=(SELECT ID FROM ConfigSettings WHERE Name='mincPath')"
@@ -343,6 +344,7 @@ mysql $mysqldb -h$mysqlhost --user=$mysqluser --password="$mysqlpass" -A -e "UPD
 
 
 
+echo ""
 while true; do
     read -p "Would you like to install PEAR libraries (affects system files)? [yn] " yn
     echo $yn | tee -a $LOGFILE > /dev/null
@@ -395,8 +397,9 @@ while true; do
 done;
 
 
+echo ""
 while true; do
-    read -p "Would you like to automatically create/install apache config files? [yn] " yn
+    read -p "Would you like to automatically create/install apache config files? (Works for Ubuntu 14.04 default Apache installations) [yn] " yn
     echo $yn | tee -a $LOGFILE > /dev/null
     case $yn in
         [Yy]* )
@@ -408,8 +411,8 @@ while true; do
             # Need to pipe to sudo tee because > is done as the logged in user, even if run through sudo
             sed -e "s#%LORISROOT%#$RootDir/#g" \
                 -e "s#%PROJECTNAME%#$projectname#g" \
-                < ../docs/config/apache2-site | sudo tee /etc/apache2/sites-available/$projectname > /dev/null
-            sudo a2dissite default
+                < ../docs/config/apache2-site | sudo tee /etc/apache2/sites-available/$projectname.conf > /dev/null
+            sudo a2dissite 000-default
             sudo a2ensite $projectname
             break;;
         [Nn]* )
