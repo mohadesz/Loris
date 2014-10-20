@@ -163,11 +163,11 @@ mkdir -p ../project ../project/libraries ../project/instruments ../project/templ
 # Setting 777 permissions for templates_c
 chmod 777 ../smarty/templates_c
 
-# set the group user to www-data for tools/logs directory:
+# Set the proper permission for the tools/logs directory:
 if [ -d logs ]; then
-	sudo chgrp www-data logs
-	# set the proper permission for the tools/logs directory:
-	chmod 770 logs 
+        chmod 770 logs
+        # Set the group to www-data for tools/logs directory:
+        sudo chgrp www-data logs
 fi
 
 
@@ -292,7 +292,7 @@ while true; do
         break;
     elif [[ $result == *1007* ]] ; then
         echo "Could not create the database $mysqldb. A database with the name $mysqldb already exists.";
-        read -p "Database name: " mysqldb
+        read -p "Choose a different database name: " mysqldb
     elif [[ $result != '' ]]; then
         echo "Could not create the database with the root user provided.";
         exit 1;
@@ -315,7 +315,7 @@ fi
 
 
 echo ""
-echo "Creating database tables from schema."
+echo "Creating/populuating database tables from schema."
 echo ""
 mysql $mysqldb -h$mysqlhost --user=$mysqlrootuser --password="$mysqlrootpass" -A 2>&1 < ../SQL/0000-00-00-schema.sql
 echo "Updating Loris admin user's password."
