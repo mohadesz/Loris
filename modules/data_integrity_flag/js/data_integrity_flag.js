@@ -1,17 +1,16 @@
-/*global document: false, $: false, window: false, unescape: false, Option: false*/
-
 function getQueryVariable(variable) {
-    "use strict";
-    var query = window.location.search.substring(1),
-        vars = query.split("&"),
-        i,
-        pair;
-    for (i = 0; i < vars.length; i += 1) {
-        pair = vars[i].split("=");
-        if (pair[0] === variable) {
-            return unescape(pair[1]);
-        }
-    }
+	var query = window.location.search.substring(1);
+	var vars = query.split("&");
+	for (var i = 0; i < vars.length; i++) {
+		var pair = vars[i].split("=");
+		if (pair[0] == variable) {
+			return unescape(pair[1]);
+		}
+	}
+}
+
+function changefieldOptions() {
+	changeVisitLabels();
 }
 
 function changeVisitLabels() {
@@ -53,10 +52,28 @@ function changeVisitLabels() {
 
 
 //runs the function when the page is loaded..
-$(function () {
-    "use strict";
-    changeVisitLabels();
-    $('#instrument,#visit_label,#users').bind('change', function () { $("#filter").trigger('click'); }); //The form is automatically loaded when the instrument dropdown is changed
-    $('#update_data').bind('change', function () { $("#filter").trigger('click'); }); //The form is automatically loaded when the dropdown is changed
-});
+$(function(){
+	
+	changefieldOptions();
 
+	$('#instrument').bind('change',function(event){$("#filter").trigger('click');}); //The form is automatically loaded when the dropdown is changed
+
+	 save();
+	});
+	
+	
+	
+function save() {
+    "use strict";
+    var default_value, id, value;
+    /**To get the default value**/
+    
+    $('.comment').blur(function (event) {
+         id = event.target.id;
+         value = $("#" + id).text();
+         $.get("UpdateDiComments.php?id=" + id + "&value=" + value , function () {});
+    }).keypress(function (e) {
+        if (e.which === 13) { // Determine if the user pressed the enter button
+            $(this).blur();
+        }
+})};
