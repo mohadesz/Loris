@@ -9,7 +9,7 @@
  * @package    Main
  * @subpackage Imaging 
  * @author     Loris team <info-loris.mni@mcgill.ca> 
- * @license    Loris License
+ * @license    @GPLv3
  * @link       https://github.com/aces/Loris-Trunk
 */
 
@@ -25,7 +25,7 @@ require_once 'Notify.class.inc';
  * @package    Main
  * @subpackage Imaging 
  * @author     Loris team <info-loris.mni@mcgill.ca>
- * @license    Loris License
+ * @license    @GPLv3
  * @link       https://github.com/aces/Loris-Trunk
 */
 
@@ -40,6 +40,42 @@ class NDB_Form_Imaging_Browser extends NDB_Form
      * var to store the sessionID.
      */
     var $sessionID;
+
+    /**
+     * Determine whether the user has permission to view the imaging_browser page
+     *
+     * @return bool whether the user has access
+     */
+    function _hasAccess()
+    {
+        $user =& User::singleton();
+        if (Utility::isErrorX($user)) {
+            return PEAR::raiseError("User Error: " .$user->getMessage());
+        }
+
+        // allow only to view own site data
+        $timePoint =& TimePoint::singleton($_REQUEST['sessionID']);
+        if (Utility::isErrorX($timePoint)) {
+            return PEAR::raiseError("TimePoint Error (".$_REQUEST['sessionID']."): ".$timePoint->getMessage());
+        }
+
+        return ($user->hasPermission('imaging_browser_view_allsites') || ($user->getData('CenterID') == $timePoint->getData('CenterID') && $user->hasPermission('imaging_browser_view_site')));
+    }
+
+    /**
+     * Determine whether the user has permission to QC the imaging_browser page
+     *
+     * @return bool whether the user has QC permission
+     */
+    function _hasQCPerm()
+    {
+        $user =& User::singleton();
+        if (Utility::isErrorX($user)) {
+            return PEAR::raiseError("User Error: " .$user->getMessage());
+        }
+
+        return $user->hasPermission('imaging_browser_qc');
+    }
 
     /**
     * Sets up main parameters 
@@ -94,6 +130,7 @@ class NDB_Form_Imaging_Browser extends NDB_Form
             $this->tpl_data['caveat_options'] 
                 = array ('' => '&nbsp;', true => 'True', false => 'False');
             $this->tpl_data['has_permission'] = ($this->_hasAccess()) ? true : false;
+            $this->tpl_data['has_qc_permission'] = ($this->_hasQCPerm()) ? true : false;
         }
     }
     /**
@@ -105,7 +142,7 @@ class NDB_Form_Imaging_Browser extends NDB_Form
     {
         $extra_where_string = "";
         if (!empty($_REQUEST['selectedOnly'])) {
-            $extra_where_string .= " AND sel.Value IS NOT NULL";
+            $extra_where_string .= " AND COALESCE(sel.Value,'') <> ''";
         }
         // To better support QC for CIVET output a couple of 
         // additional conditions have been put in...

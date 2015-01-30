@@ -10,7 +10,7 @@
  * @package    Main
  * @subpackage Imaging
  * @author     Olga Tsibulevskaya <olgatsib@gmail.com>
- * @license    Loris license
+ * @license    @GPLv3
  * @link       https://www.github.com/olgatsib/Loris-Trunk/
  */
 
@@ -23,7 +23,7 @@ require_once 'NDB_Menu_Filter.class.inc';
  * @package    Main
  * @subpackage Imaging
  * @author     Olga Tsibulevskaya <olgatsib@gmail.com>
- * @license    Loris license
+ * @license    @GPLv3
  * @link       https://www.github.com/olgatsib/Loris-Trunk/
  */
 class NDB_Menu_Filter_Dicom_Archive extends NDB_Menu_Filter
@@ -37,11 +37,8 @@ class NDB_Menu_Filter_Dicom_Archive extends NDB_Menu_Filter
      */
     function _hasAccess()
     {
-        $user =& User::singleton();
-        if (Utility::isErrorX($user)) {
-            return PEAR::raiseError("User Error: " .$user->getMessage());
-        }
-        return $user->hasPermission('view_final_radiological_review');
+        $user = User::singleton();
+        return $user->hasPermission('dicom_archive_view_allsites');
     }
     
     /**
