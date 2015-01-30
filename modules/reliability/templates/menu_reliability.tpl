@@ -188,7 +188,7 @@
 <table id="LogEntries" border="0" valign="bottom" width="100%">
 <tr>
     <!-- title -->
-    <td class="controlPanelSection">List of Log Entries</td>
+    <td class="controlPanelSection">List of candidates flagged for reliability</td>
 
     <!-- display pagination links -->
     <td align="right">{$page_links}</td>
@@ -196,8 +196,7 @@
 </table>
 
 <!-- start data table -->
-<div class="table-responsive">
-    <table border="0" width="100%" class ="table table-hover table-primary table-bordered">
+    <table border="0" width="100%" class ="table table-hover table-primary table-bordered dynamictable">
         <thead>
             <tr class="info">
              <th>No.</th>
@@ -268,5 +267,4 @@
                         
     <!-- end data table -->
     </table>
-</div>
 

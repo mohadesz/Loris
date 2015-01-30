@@ -11,7 +11,7 @@
  * @category MRI
  * @package  Main
  * @author   Zia Mohadesz <zia.mohades@gmail.com>
- * @license  Loris license
+ * @license  GPLv3
  * @link     https://www.github.com/aces/Loris-Trunk/
  *
  */
@@ -23,7 +23,7 @@ require_once 'NDB_Menu_Filter.class.inc';
  * @category MRI
  * @package  Main
  * @author   Zia Mohadesz <zia.mohades@gmail.com>
- * @license  Loris license
+ * @license  GPLv3
  * @link     https://www.github.com/aces/Loris-Trunk/
  * 
  */
@@ -46,8 +46,8 @@ class NDB_Menu_Mri_Protocol_Violations extends NDB_Menu_Filter
         }
 
         $this->tpl_data['violated_scans_modifications']
-            = $user->hasPermission('violated_scans_modifications');
-        return ($user->hasPermission('violated_scans'));
+            = $user->hasPermission('violated_scans_edit');
+        return ($user->hasPermission('violated_scans_view_allsites'));
     }
 
     /**

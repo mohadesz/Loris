@@ -29,8 +29,8 @@
                     </div>
                     <div class="row">
                         <div class="form-group col-sm-12">
-                            <label class="col-sm-12 col-md-4">{$form.mri_file.label}</label>
-                            <div class="col-sm-12 col-md-8">{$form.mri_file.html}</div>
+                            <label class="col-sm-4">{$form.mri_file.label}</label>
+                            <div class="col-sm-8">{$form.mri_file.html}</div>
                         </div>
                     </div>
                     <div class="row">
@@ -70,6 +70,9 @@
         </div>
     </div>
 </div>
+ 
+{*  This section is commented out because the functionality is not currently in the backend
+    This functionality is expected to be implemented in future releases of LORIS 
     <progress id="progressbar" value="0" max="100"></progress><span id="progresslabel"></span>
     
     <table>
@@ -89,11 +92,10 @@
         </tr>
     
     </table>
+
+*}
 <div class="row">
-    <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
-        <div class="carousel-inner">
-            <div class="table-scroll" id="content">
-                <table  class ="table table-hover table-primary table-bordered" border="0" width="100%">
+                <table class ="dynamictable table table-hover table-primary table-bordered" border="0" width="100%">
                     <thead>
                     <tr class="info">
                          <th nowrap="nowrap">No.</th>
@@ -147,14 +149,5 @@
                     </tbody>
                     <!-- end data table -->
                 </table>
-            </div>
-            <a class="left carousel-control"  id="scrollLeft" href="#carousel-example-generic">
-                <span class="glyphicon glyphicon-chevron-left"></span>
-            </a>
-            <a class="right carousel-control" id="scrollRight" href="#carousel-example-generic" data-slide="next">
-                <span class="glyphicon glyphicon-chevron-right"></span>
-            </a>
-        </div>
-    </div>
 </div>
 

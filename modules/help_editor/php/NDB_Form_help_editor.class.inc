@@ -7,7 +7,7 @@
  * @category Main
  * @package  Loris
  * @author   Rathi Sekaran <sekaranrathi@gmail.com>
- * @license  Loris license
+ * @license  GPLv3
  * @link     https://www.github.com/aces/Loris-Trunk/
  */
 
@@ -22,7 +22,7 @@ require_once "HelpFile.class.inc";
  * @category Main
  * @package  Loris
  * @author   Rathi Sekaran <sekaranrathi@gmail.com>
- * @license  Loris license
+ * @license  GPLv3
  * @link     https://www.github.com/aces/Loris-Trunk/
  */
 
@@ -75,7 +75,7 @@ class NDB_Form_help_editor extends NDB_Form
             $help_file           = HelpFile::factory($helpID);
             $data                = $help_file->toArray(); 
             $defaults['title']   = $data['topic'];
-            $defaults['content'] = trim($data['content']);
+            $defaults['content'] = utf8_encode(trim($data['content']));
             if (isset($_REQUEST['helpID'])) {
                 $this->tpl_data['module_name'] = "Help Editor";
             } else {
