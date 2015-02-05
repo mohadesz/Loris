@@ -20,14 +20,16 @@ $fileName = $DB->pselectOne("Select File_name from document_repository where rec
                             array(':identifier' => $rid));
 $userName = $DB->pselectOne("Select uploaded_by from document_repository where record_id =:identifier",
                             array(':identifier'=> $rid));
+$dataDir  = $DB->pselectOne("Select Data_dir from document_repository where record_id =:identifier",
+                            array(':identifier'=> $rid));
 
 $user =& User::singleton();
 if (Utility::isErrorX($user)) {
     return PEAR::raiseError("User Error: ".$user->getMessage());
 }
 
-//if user has document repository permission
-if ($user->hasPermission('file_upload')) {
+//if user has document repository delete permission
+if ($user->hasPermission('document_repository_delete')) {
     $DB->delete("document_repository", array("record_id" => $rid));
     $www = $config->getSetting('www');
     $msg_data['deleteDocument'] = $www['url'] . "/main.php?test_name=document_repository";
@@ -39,7 +41,7 @@ if ($user->hasPermission('file_upload')) {
     }
 }
 
-$path = "document_repository/" . $userName . "/" . $fileName;
+$path = __DIR__ . "/../user_uploads/$dataDir";
 
 if (file_exists($path))
     unlink($path);

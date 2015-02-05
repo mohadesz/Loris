@@ -176,7 +176,7 @@ class NDB_Form_dashboard extends NDB_Form
         }
 
         // Accounts pending approval
-        if ($user->hasPermission('user_accounts_multisite')) {
+        if ($user->hasPermission('user_accounts_multisite') && $user->hasPermission('user_accounts')) {
             $this->tpl_data['pending_users'] = $DB->pselectOne(
                 "SELECT count(*) FROM users WHERE Pending_approval='Y'", array()
             );
@@ -198,7 +198,7 @@ class NDB_Form_dashboard extends NDB_Form
         }
 
         // Document Repository Items
-        if ($user->hasPermission('file_upload')) {
+        if ($user->hasPermission('document_repository_view') || $user->hasPermission('document_repository_delete')) {
             $document_repository = $DB->pselect(
                 "SELECT File_name, Date_uploaded, Data_dir FROM document_repository 
                 ORDER BY Date_uploaded DESC LIMIT 4", array()

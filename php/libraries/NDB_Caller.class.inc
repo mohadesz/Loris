@@ -78,16 +78,25 @@ class NDB_Caller extends PEAR
     */
     function load($test_name, $subtest, $CommentID = '', $nextpage=null)
     {
+        $config = NDB_Config::singleton();
         // if no first argument, return
         if (empty($test_name)) {
             return;
+        }
+        if ($_SERVER['REQUEST_METHOD'] === 'POST'
+            && isset($_POST['login'])
+        ) {
+            header("HTTP/1.1 303 See Other");
+             $url  = $config->getSetting('url');
+             $url .= $_SERVER['REQUEST_URI'];
+             // sending user to the url that was requested
+             header("Location: $url");
         }
         if (empty($CommentID) && isset($_REQUEST['commentID'])) {
             $CommentID = $_REQUEST['commentID'];
         }
         // get the files path, aka the base directory
-        $config =& NDB_Config::singleton();
-        $base   = $config->getSetting('base');
+        $base = $config->getSetting('base');
 
         if (is_dir($base . "modules/$test_name")) {
             // New module style

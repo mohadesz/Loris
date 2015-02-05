@@ -11,7 +11,6 @@
  * @link     https://www.github.com/aces/Loris/
  */
 
-require_once 'smarty3/Smarty.class.php';
 
 /**
  * This overrides the Smarty base class in order to look into module/templates,
@@ -37,12 +36,12 @@ class Smarty_NeuroDB extends Smarty
      *
      * @param string $moduleName The name of the module to search through
      */
-    function Smarty_NeuroDB($moduleName = null)
+    function __construct($moduleName = null)
     {
+        parent::__construct();
+
         $config =& NDB_Config::singleton();
         $paths  = $config->getSetting('paths');
-
-        $this->__construct();
 
         // NeuroDB plugin is no longer needed now that Smarty3 supports
         // multiple template directories

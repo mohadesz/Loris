@@ -3,23 +3,21 @@
  * @package main
  */
 set_include_path(get_include_path().":../project/libraries:../php/libraries:");
+require_once __DIR__ . "/../vendor/autoload.php";
 ini_set('default_charset', 'utf-8');
 ob_start('ob_gzhandler');
-// Create an output buffer to capture console output, separately from the 
+// Create an output buffer to capture console output, separately from the
 // gzip handler.
 ob_start();
 // start benchmarking
-require_once 'Benchmark/Timer.php';
 $timer = new Benchmark_Timer;
 $timer->start();
 
 // load the client
-require_once 'NDB_Client.class.inc';
 $client = new NDB_Client;
 $client->initialize();
 
 // require additional libraries
-require_once 'NDB_Breadcrumb.class.inc';
 
 $TestName = isset($_REQUEST['test_name']) ? $_REQUEST['test_name'] : 'dashboard';
 $subtest = isset($_REQUEST['subtest']) ? $_REQUEST['subtest'] : '';
@@ -46,6 +44,8 @@ tplFromRequest('sessionID');
 tplFromRequest('commentID');
 tplFromRequest('dynamictabs');
 
+$www = $config->getSetting('www');
+$tpl_data['baseurl'] = $www['url'];
 // study title
 $tpl_data['study_title'] = $config->getSetting('title');
 // draw the user information table
@@ -93,7 +93,11 @@ $paths = $config->getSetting('paths');
 
 if (!empty($TestName)) {
     if (file_exists($paths['base'] . "modules/$TestName/js/$TestName.js")) {
-        $tpl_data['test_name_js'] = "GetJS.php?Module=$TestName";
+        if(strpos($_SERVER['REQUEST_URI'], "main.php") === false) {
+            $tpl_data['test_name_js'] = "js/$TestName.js";
+        } else {
+            $tpl_data['test_name_js'] = "GetJS.php?Module=$TestName";
+        }
     } elseif (file_exists($paths['base'] . "htdocs/js/modules/$TestName.js")) {
         // Old style, this should be removed after all modules are modularized.
         $tpl_data['test_name_js'] = "js/modules/$TestName.js";
@@ -101,13 +105,20 @@ if (!empty($TestName)) {
 
     // Get CSS for a module
     if (file_exists($paths['base'] . "modules/$TestName/css/$TestName.css")) {
-        $tpl_data['test_name_css'] = "GetCSS.php?Module=$TestName";
+        if(strpos($_SERVER['REQUEST_URI'], "main.php") === false) {
+            $tpl_data['test_name_css'] = "css/$TestName";
+        } else {
+            $tpl_data['test_name_css'] = "GetCSS.php?Module=$TestName";
+        }
     }
 
-    // Used for CSS for a specific instrument. This should eventually be
-    // rolled into the GetCSS wrapper
-    if (file_exists("css/instruments/$TestName.css")) { 
-        $tpl_data['test_name_css'] = "css/instruments/$TestName.css";
+    // Used for CSS for a specific instrument.
+    if (file_exists($paths['base'] . "project/instruments/$TestName.css")) {
+        if(strpos($_SERVER['REQUEST_URI'], "main.php") === false) {
+            $tpl_data['test_name_css'] = "css/instruments/$TestName.css";
+        } else {
+            $tpl_data['test_name_css'] = "GetCSS.php?Instrument=$TestName";
+        }
     }
 }
 
@@ -149,6 +160,9 @@ try {
         $tpl_data['control_panel'] = $caller->controlPanel;
     }
     $tpl_data['workspace'] = $workspace;
+} catch(ConfigurationException $e) {
+    header("HTTP/1.1 500 Internal Server Error");
+    $tpl_data['error_message'][] = $e->getMessage();
 } catch(Exception $e) {
     switch($e->getCode()) {
         case 404: header("HTTP/1.1 404 Not Found"); break;
@@ -240,4 +254,3 @@ if ($config->getSetting('showTiming')) {
 
 //print '<pre>'; print_r($tpl_data); print '</pre>';
 ?>
-
