@@ -100,7 +100,7 @@ class NDB_Menu_Filter_Imaging_Browser extends NDB_Menu_Filter
         $PendingFailSubquery = "
             CASE s.MRIQCStatus
                 WHEN 'Fail' THEN
-                    IF(s.MRIQCPending='Y', 'Pending Fail', 'Fail')
+                    IF(s.MRIQCPending, 'Pending Fail', 'Fail')
                 WHEN 'Pass' THEN
                     IF(s.MRIQCPending='Y', 'Pending Pass', 'Pass')
                 ELSE s.MRIQCStatus
@@ -113,11 +113,16 @@ class NDB_Menu_Filter_Imaging_Browser extends NDB_Menu_Filter
             JOIN files f ON (f.SessionID=s.ID) 
             LEFT JOIN files_qcstatus fqc ON (fqc.FileID=f.FileID) 
             JOIN mri_acquisition_dates md ON (md.SessionID=s.ID)
+            JOIN parameter_file pf ON (pf.FileID=f.FileID)
+            JOIN mri_scanner sc ON (sc.ID=pf.value)
+            JOIN candidate scid ON (scid.CandID=sc.CandID)
+            JOIN psc AS site ON (site.CenterID=scid.CenterID)
             WHERE 
             f.PendingStaging=0 AND 
             f.FileType='mnc' AND 
             f.OutputType='native' AND 
-            f.AcquisitionProtocolID not in (1, 2, 3, 52)";
+            f.AcquisitionProtocolID not in (1, 2, 3, 52) AND
+            pf.ParameterTypeID=14";
 
         $user =& User::singleton();
         $DB = Database::singleton();
@@ -129,6 +134,8 @@ class NDB_Menu_Filter_Imaging_Browser extends NDB_Menu_Filter
             'p.MRI_alias as Site',
             'c.PSCID as PSCID',
             'c.CandID as DCCID',
+            'c.Entity_type as Entity',
+            'site.Name as Scanner',
             's.visit_label as Visit_Label',
             "$PendingFailSubquery as QC_Status",
             'MIN(md.AcquisitionDate) as First_Acq_Date',
@@ -145,6 +152,8 @@ class NDB_Menu_Filter_Imaging_Browser extends NDB_Menu_Filter
             'Site',
             'PSCID',
             'DCCID',
+            'Entity',
+            'Scanner',
             'Visit_Label',
             'QC_Status', 
             'First_Acq_Date',
@@ -162,8 +171,7 @@ class NDB_Menu_Filter_Imaging_Browser extends NDB_Menu_Filter
             'c.ProjectID',
             'c.CenterID',
             's.MRIQCStatus',
-            'pending',
-            'f.AcquisitionProtocolID'
+            'pending'
         );
 
         $this->formToFilter = array(
@@ -173,10 +181,9 @@ class NDB_Menu_Filter_Imaging_Browser extends NDB_Menu_Filter
             'ProjectID' => 'c.ProjectID',
             'SiteID' => 'c.CenterID',
             'VisitQCStatus' => 's.MRIQCStatus',
-            'Pending' => 'pending',
-            'Scan_type'=>'f.AcquisitionProtocolID'
+            'Pending' => 'pending'
         );
-        $this->EqualityFilters = array('f.AcquisitionProtocolID');
+        $this->EqualityFilters = array();
         $this->searchKeyword    = array();
     }
 
@@ -234,21 +241,7 @@ class NDB_Menu_Filter_Imaging_Browser extends NDB_Menu_Filter
             'Pending',
             'Pending and New',
             array(''=>'All', 'P'=>'Pending', 'N'=>'New', 'PN'=>'Pending or New')
-        );
-
-        //query to get scan types that exist for the project
-        $types_q = $DB->pselect(
-                "SELECT ID, Scan_type FROM mri_scan_type mri
-                 JOIN files f ON (f.AcquisitionProtocolID=mri.ID)",
-                 array()
-        );
-        $scan_types[''] = '';
-        foreach ($types_q as $row) {
-            $type                   = $row['Scan_type'];
-            $scan_types[$row['ID']] = $type;
-        }
-        $this->addSelect('Scan_type', 'Sequence Type', $scan_types);
-
+        ); 
         $outputTypes = $DB->pselect(
             "SELECT DISTINCT OutputType AS outputType 
             FROM files WHERE FileType='mnc' AND OutputType!='native'", array()
@@ -321,7 +314,7 @@ class NDB_Menu_Filter_Imaging_Browser extends NDB_Menu_Filter
     {
         $query = '';
         if ((!empty($val) || $val === '0') && $field != 'order') {
-            if ($field != 'pending' && $field !='AcquisitionProtocolID') {
+            if ($field != 'pending') {
                 if (in_array($field, $this->CheckboxFilters) && $val) {
                     $query .= " AND $field";
                 } elseif (strtolower(substr($field, -8)) == 'centerid'
@@ -335,7 +328,7 @@ class NDB_Menu_Filter_Imaging_Browser extends NDB_Menu_Filter
                 } else {
                     $query .= " AND $field LIKE CONCAT('%', :v_$prepared_key, '%') ";
                 }
-            } else if ($field == 'pending') {
+            } else {
                 switch ($val) {
                 case "P":
                     $query .= " AND s.MRIQCPending='Y'"; 
@@ -349,8 +342,6 @@ class NDB_Menu_Filter_Imaging_Browser extends NDB_Menu_Filter
                         OR s.MRIQCStatus='' OR fqc.QCFirstChangeTime IS NULL)"; 
                     break;
                 }
-            } else if ($field == 'AcquisitionProtocolID') {
-                  $query .= " AND $field = :v_$prepared_key";
             }
         }
         return $query;
