@@ -1132,7 +1132,9 @@ CREATE TABLE `session` (
   KEY `session_candVisit` (`CandID`,`VisitNo`),
   KEY `FK_session_2` (`CenterID`),
   CONSTRAINT `FK_session_2` FOREIGN KEY (`CenterID`) REFERENCES `psc` (`CenterID`),
-  CONSTRAINT `FK_session_1` FOREIGN KEY (`CandID`) REFERENCES `candidate` (`CandID`)
+  CONSTRAINT `FK_session_1` FOREIGN KEY (`CandID`) REFERENCES `candidate` (`CandID`),
+  CONSTRAINT `FK_session_3` FOREIGN KEY (`PhantomID`)  REFERENCES `mri_phantom`(`ID`)
+
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Table holding session information';
 
 --
@@ -2448,9 +2450,9 @@ CREATE TABLE `server_processes` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE mri_phantom (ID INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-                          PhantomID VARCHAR(255) NOT NULL,
-                          PRIMARY KEY (ID),
-                          CONSTRAINT FK_session FOREIGN KEY (ID) REFERENCES session (ID)
-                          ON DELETE NO ACTION
-                          ON UPDATE NO ACTION);
+DROP TABLE IF EXISTS `mri_phantom`;
+CREATE TABLE  `mri_phantom` (
+	ID INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+        PhantomID VARCHAR(255) NOT NULL,
+        PRIMARY KEY (ID)
+);
