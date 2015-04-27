@@ -2446,3 +2446,11 @@ CREATE TABLE `server_processes` (
   KEY `FK_task_1` (`userid`),
   CONSTRAINT `FK_task_1` FOREIGN KEY (`userid`) REFERENCES `users` (`UserID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE mri_phantom (ID INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+                          PhantomID VARCHAR(255) NOT NULL,
+                          PRIMARY KEY (ID),
+                          CONSTRAINT FK_session FOREIGN KEY (ID) REFERENCES session (ID)
+                          ON DELETE NO ACTION
+                          ON UPDATE NO ACTION);
