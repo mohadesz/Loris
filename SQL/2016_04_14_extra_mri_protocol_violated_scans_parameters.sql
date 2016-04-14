@@ -7,6 +7,7 @@ alter table mri_protocol_violated_scans add column `DiffusionBValue` varchar(255
 alter table mri_protocol_violated_scans add column `DiffusionGradientOrientation` varchar(255) DEFAULT NULL;
 alter table mri_protocol_violated_scans add column `ParallelReductionFactorSecondInPlane` varchar(255) DEFAULT NULL;
 alter table mri_protocol_violated_scans add column `FlowCompensationDirection` varchar(255) DEFAULT NULL;
+alter table mri_protocol_violated_scans add column `AcquisitionContrast` varchar(255) DEFAULT NULL;
 alter table mri_protocol_violated_scans add column `SliceOrientation` varchar(255) DEFAULT NULL;
 alter table mri_protocol_violated_scans add column `CardiacGating_list` varchar(255) DEFAULT NULL;
 alter table mri_protocol_violated_scans add column `EPIfactor` varchar(255) DEFAULT NULL;

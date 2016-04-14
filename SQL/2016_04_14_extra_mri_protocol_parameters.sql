@@ -7,6 +7,7 @@ alter table mri_protocol add column `DiffusionBValue` varchar(255) DEFAULT NULL 
 alter table mri_protocol add column `DiffusionGradientOrientation` varchar(255) DEFAULT NULL after DiffusionBValue;
 alter table mri_protocol add column `ParallelReductionFactorSecondInPlane` varchar(255) DEFAULT NULL after DiffusionGradientOrientation;
 alter table mri_protocol add column `FlowCompensationDirection` varchar(255) DEFAULT NULL after ParallelReductionFactorSecondInPlane;
+alter table mri_protocol add column `AcquisitionContrast` varchar(255) DEFAULT NULL after FlowCompensationDirection;
 alter table mri_protocol add column `SliceOrientation` varchar(255) DEFAULT NULL after FlowCompensationDirection;
 alter table mri_protocol add column `CardiacGating_list` varchar(255) DEFAULT NULL after SliceOrientation;
 alter table mri_protocol add column `EPIfactor` varchar(255) DEFAULT NULL after CardiacGating_list;
