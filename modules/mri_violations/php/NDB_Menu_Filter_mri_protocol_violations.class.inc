@@ -76,18 +76,7 @@ class NDB_Menu_Mri_Protocol_Violations extends NDB_Menu_Filter
             'mpv.zstep_range',
             'mpv.time_range',
             'mpv.SeriesUID',
-            'mpv.PulseSequenceName',
-            'mpv.ParallelReductionFactorOutOfPlane',
-            'mpv.ParallelAcquisition',
-            'mpv.ParallelAcquisitionTechnique',
-            'mpv.DiffusionBValue',
-            'mpv.DiffusionGradientOrientation',
-            'mpv.ParallelReductionFactorSecondInPlane',
-            'mpv.FlowCompensationDirection',
-            'mpv.SliceOrientation',
-            'mpv.CardiacGating_list',
-            'mpv.NumberOfEchoes',
-            'mpv.EPIfactor'
+            'mpv.NumberOfEchoes'
             
         );
         $config=&NDB_Config::singleton();
@@ -151,12 +140,7 @@ class NDB_Menu_Mri_Protocol_Violations extends NDB_Menu_Filter
             slice_thickness_range, FoV_x_range, FoV_y_range, 
             xspace_range, yspace_range, zspace_range, 
             xstep_range, ystep_range, zstep_range, 
-            time_range, series_description_regex, PulseSequenceName,
-            ParallelReductionFactorOutOfPlane, ParallelReductionFactorInPlane,
-            ParallelAcquisition, ParallelAcquisitionTechnique, DiffusionBValue,
-            DiffusionGradientOrientation, ParallelReductionFactorSecondInPlane,
-            FlowCompensationDirection, SliceOrientation, CardiacGating_list,
-            EPIfactor, NumberOfEchoes
+            time_range, series_description_regex, NumberOfEchoes
             FROM mri_protocol as p 
             LEFT JOIN mri_scan_type as s 
             ON p.Scan_type=s.ID", array()
